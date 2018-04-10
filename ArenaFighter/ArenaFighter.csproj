@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BattleLog.cs" />
     <Compile Include="Characters\Attributes.cs" />
     <Compile Include="Characters\NonPlayerCharacter.cs" />
     <Compile Include="Characters\Player.cs" />
@@ -55,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NameGenerator\NameGenerator.csproj">
+      <Project>{698efac5-6743-4924-b229-c5d62566bfe7}</Project>
+      <Name>NameGenerator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

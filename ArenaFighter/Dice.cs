@@ -9,11 +9,9 @@ namespace ArenaFighter {
         private const int diceSides = 6;
         private Random random;
 
-        public Dice() {
-            random = new Random();
-        }
-
         public int[] RollDice(int rolls) {
+            random = new Random();
+
             int[] results = new int[rolls];
 
             for (int i = 0; i < rolls; i++) {
@@ -23,6 +21,8 @@ namespace ArenaFighter {
         }
 
         public int RollDice() {
+            random = new Random();
+
             return random.Next(1, diceSides + 1);
         }
     }

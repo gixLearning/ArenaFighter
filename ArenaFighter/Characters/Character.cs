@@ -10,14 +10,16 @@ namespace ArenaFighter.Characters {
 
         public string Name { get; set; }
         public int Health { get; set; }
+        public int MaxHealth { get; set; }
         public int Strenght { get { return attributes.Strenght; } }
         public int Defense { get { return attributes.Defense; } }
 
         protected Character() {
             attributes = new Attributes();
-            attributes.Randomize();
         }
 
-
+        public void RollAttributes() {
+            attributes.Randomize();
+        }
     }
 }

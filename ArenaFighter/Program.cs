@@ -9,23 +9,25 @@ using ArenaFighter.Characters;
 using ArenaFighter.Combat;
 
 namespace ArenaFighter {
-    class Program {
+    internal class Program {
 
-        private static bool charSelectConfirmed = false;
-        private static bool gameIsRunning = false;
+        private static bool charSelectConfirmed;
 
         static void Main(string[] args) {
             string key;
             Player player = new Player();
             PlayerCharacter pc;
 
-            do {
-                Console.WriteLine("Please set a name for your character:");
-                key = Console.ReadLine();
-                pc = new PlayerCharacter {
-                    Name = key
-                };
+            Console.WriteLine("Please set a name for your character:");
+            key = Console.ReadLine();
+            pc = new PlayerCharacter {
+                Name = key,
+                Health = 100
+            };
+            pc.MaxHealth = pc.Health;
 
+            do {
+                pc.RollAttributes();
                 Console.WriteLine("Figher name:" + pc.Name);
                 Console.WriteLine("Stats: \n"
                     + "Strenght:" + pc.Strenght + "\n"
@@ -35,26 +37,33 @@ namespace ArenaFighter {
                 do {
                     Console.Write("Use this character? (y/n)");
                     response = Console.ReadKey(false).Key;
-                    if(response != ConsoleKey.Enter) {
+                    if (response != ConsoleKey.Enter) {
                         Console.WriteLine();
                     }
                 } while (response != ConsoleKey.Y && response != ConsoleKey.N);
-                
+
                 charSelectConfirmed = response == ConsoleKey.Y;
             } while (!charSelectConfirmed);
 
             Console.ReadLine();
             Console.Clear();
-            DoIntro();            
+
+            DoIntro();
             player.PlayerCharacter = pc;
 
-            Battle battle = new Battle(player);
-            Console.ReadLine();
+            BattleLog battleLog = new BattleLog();
+            Battle battle = new Battle(player, battleLog);
+            battle.Play();
+
+            if (battle.BattleEnded) {
+                Console.WriteLine("BATTTLE ENDED");
+                battleLog.ShowLog();
+                Console.ReadLine();
+            }
         }
 
         private static void DoIntro() {
             Blinker("ADVENTURETIME!", 3000, true);
-            Debug.WriteLine("Control yeilded");
         }
 
         /// <summary>
@@ -66,6 +75,8 @@ namespace ArenaFighter {
         private static void Blinker(string text, int duration, bool clearScreen = false) {
             Stopwatch stopwatch = new Stopwatch();
             Random rand = new Random();
+
+            ConsoleColor originalColor = Console.ForegroundColor;
 
             stopwatch.Start();
             while (stopwatch.ElapsedMilliseconds < duration) {
@@ -79,6 +90,8 @@ namespace ArenaFighter {
                 }
             }
             stopwatch.Stop();
+
+            Console.ForegroundColor = originalColor;
         }
     }
 }
