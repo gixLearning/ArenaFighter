@@ -8,6 +8,12 @@ namespace ArenaFighter.Characters {
     public class Attributes {
         private int strenght;
         private int defense;
+        private int initiative;
+
+        public int Initiative {
+            get { return initiative; }
+            set { initiative = value; }
+        }
 
         public int Strenght {
             get { return strenght; }
@@ -19,10 +25,11 @@ namespace ArenaFighter.Characters {
             set { defense = value; }
         }
 
-        internal void Randomize() {
-            Random rand = new Random();
-            Strenght = rand.Next(1, 100 + 1);
-            Defense = rand.Next(1, 50 + 1);
+        internal void Roll() {
+            Dice dice = new Dice();
+            Strenght = dice.RollDice();
+            Defense = dice.RollDice();
+            Initiative = dice.RollDice();
         }
     }
 }

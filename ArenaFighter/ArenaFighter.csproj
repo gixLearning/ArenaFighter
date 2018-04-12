@@ -31,6 +31,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\helmet.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,12 +48,16 @@
   <ItemGroup>
     <Compile Include="BattleLog.cs" />
     <Compile Include="Characters\Attributes.cs" />
+    <Compile Include="Characters\Equipment.cs" />
+    <Compile Include="Characters\Item.cs" />
     <Compile Include="Characters\NonPlayerCharacter.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Characters\PlayerCharacter.cs" />
     <Compile Include="Combat\Battle.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Dice.cs" />
+    <Compile Include="Enums\EquipmentSlots.cs" />
+    <Compile Include="Enums\Modifiers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Combat\Round.cs" />
@@ -62,6 +70,9 @@
       <Project>{698efac5-6743-4924-b229-c5d62566bfe7}</Project>
       <Name>NameGenerator</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\helmet.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

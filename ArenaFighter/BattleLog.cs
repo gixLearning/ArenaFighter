@@ -1,14 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ArenaFighter {
     public class BattleLog {
+        private List<string> logMessages;
 
-        public void CalculateFinalScore() {
+        public BattleLog() {
+            logMessages = new List<string>();
+        }
 
+        public void AddToLog(string message) {
+            logMessages.Add(message);
         }
 
         public void ShowLog() {
-            Console.WriteLine("BOOP!");
+            if(logMessages.Count == 0 ) {
+                Console.WriteLine();
+                Console.WriteLine("Nothing has been recorded yet.");
+            } else {
+                Console.WriteLine();
+                foreach (string log in logMessages) {
+                    Console.WriteLine(log);
+                }
+            }
         }
     }
 }

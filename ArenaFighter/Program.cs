@@ -10,10 +10,12 @@ using ArenaFighter.Combat;
 
 namespace ArenaFighter {
     internal class Program {
-
         private static bool charSelectConfirmed;
 
         static void Main(string[] args) {
+
+            Console.Title = "ArenaFighter";
+
             string key;
             Player player = new Player();
             PlayerCharacter pc;
@@ -21,17 +23,19 @@ namespace ArenaFighter {
             Console.WriteLine("Please set a name for your character:");
             key = Console.ReadLine();
             pc = new PlayerCharacter {
-                Name = key,
-                Health = 100
+                Name = key
             };
-            pc.MaxHealth = pc.Health;
 
             do {
                 pc.RollAttributes();
+                pc.Health = new Dice().RollDice() + 2;
                 Console.WriteLine("Figher name:" + pc.Name);
                 Console.WriteLine("Stats: \n"
+                    + "Health:" + pc.Health + "\n"
                     + "Strenght:" + pc.Strenght + "\n"
-                    + "Defense: " + pc.Defense);
+                    + "Defense: " + pc.Defense + "\n"
+                    + "Initiative:" + pc.Initiative);
+                pc.MaxHealth = pc.Health;
 
                 ConsoleKey response;
                 do {
@@ -56,7 +60,6 @@ namespace ArenaFighter {
             battle.Play();
 
             if (battle.BattleEnded) {
-                Console.WriteLine("BATTTLE ENDED");
                 battleLog.ShowLog();
                 Console.ReadLine();
             }

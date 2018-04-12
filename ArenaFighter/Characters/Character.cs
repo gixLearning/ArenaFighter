@@ -13,13 +13,16 @@ namespace ArenaFighter.Characters {
         public int MaxHealth { get; set; }
         public int Strenght { get { return attributes.Strenght; } }
         public int Defense { get { return attributes.Defense; } }
+        public int Initiative { get { return attributes.Initiative; } }
+        public Equipment GetEquipment { get; }
 
         protected Character() {
             attributes = new Attributes();
+            GetEquipment = new Equipment();
         }
 
         public void RollAttributes() {
-            attributes.Randomize();
+            attributes.Roll();
         }
     }
 }
