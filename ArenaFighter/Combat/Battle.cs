@@ -22,16 +22,18 @@ namespace ArenaFighter.Combat {
 
         public Battle(Player player, BattleLog battleLog) {
             this.player = player;
+            player.Coins = 100;
+
             this.battleLog = battleLog;
             dice = new Dice();
             nameGenerator = new Generator();
 
             aviableItems = new List<Item> {
-                new Item(EquipmentSlot.Hands, "Awesome sword", 5),
-                new Item(EquipmentSlot.Accessory, "Ring of Speed", 1),
-                new Item(EquipmentSlot.Torso, "Red shirt", 1)
+                new Item(EquipmentSlot.Hands, "Awesome sword", 5, 6),
+                new Item(EquipmentSlot.Accessory, "Ring of Speed", 1, 12),
+                new Item(EquipmentSlot.Torso, "Red shirt", -5, 5)
             };
-       }
+        }
 
         private Character CreateOpponent() {
             Character character = new NonPlayerCharacter {
@@ -86,7 +88,7 @@ namespace ArenaFighter.Combat {
                         break;
                     }
                     case ConsoleKey.S: {
-                        DisplayItemShopMenu();            
+                        DisplayItemShopMenu();
                         break;
                     }
                     case ConsoleKey.L: {
@@ -120,21 +122,6 @@ namespace ArenaFighter.Combat {
 
             if(!equipment.DoesHaveEquipment) {
                 Console.WriteLine($"{playerCharacter.Name} doesn't have any equipment yet...");
-
-                //#region TestEquip
-                //Item i = new Item {
-                //    Name = "Awesome sword",
-                //    Modifier = 5
-                //};
-                //equipment.AddEquipment(EquipmentSlot.Hands, i);
-                //i = new Item {
-                //    Name = "Ring of Speed",
-                //    Modifier = 1
-                //};
-                //equipment.AddEquipment(EquipmentSlot.Accessory, i);
-                //#endregion
-
-
                 return;
             }
 
@@ -217,7 +204,7 @@ namespace ArenaFighter.Combat {
 
                 battleLog.AddToLog($"A battle begins between {pc.Name} and {opponent.Name}!");
 
-                do {
+                while (opponentIsAlive && characterIsAlive && !fleeCombat) {
                     round = new Round(pc, opponent, battleLog);
                     round.BeginRound();
 
@@ -231,8 +218,7 @@ namespace ArenaFighter.Combat {
 
                     key = Console.ReadKey(true).Key;
                     fleeCombat = key == ConsoleKey.F && opponentIsAlive && characterIsAlive;
-
-                } while (opponentIsAlive && characterIsAlive && !fleeCombat);
+                }
 
                 if (fleeCombat) {
                     Console.WriteLine($"{pc.Name} shamefully fled the combat...");
@@ -254,6 +240,7 @@ namespace ArenaFighter.Combat {
 
                     doCombat = false;
                 }
+
                 if (!characterIsAlive) {
                     Console.WriteLine("DEFEAT!\n");
                     battleLog.AddToLog($"{pc.Name} was defeated by {opponent.Name} and only withered bones remains now...");
@@ -267,14 +254,7 @@ namespace ArenaFighter.Combat {
             Console.Clear();
             Console.WriteLine("### Item Shop ###");
 
-            if (aviableItems.Count <= 0){
-                Console.WriteLine("--- Currently no items aviable ---");
-            } else {
-                for (int i = 0; i < aviableItems.Count; i++) {
-                    int x = i + 1;
-                    Console.Write($"[{x}] {aviableItems[i].Name}, ");
-                }
-            }
+            ListItemShopItems(aviableItems);
 
             Console.WriteLine();
             Console.WriteLine("[X] Exit shop");
@@ -293,13 +273,43 @@ namespace ArenaFighter.Combat {
                     itemToBuy = itemToBuy - 1;
                     if (aviableItems.Count > itemToBuy && itemToBuy >= 0 && aviableItems[itemToBuy] != null) {
                         item = aviableItems[itemToBuy];
-                        Console.WriteLine(item.Name);
+
+                        if(BuyItem(item, player.PlayerCharacter)) {
+                            aviableItems.Remove(item);
+                        }
+                        ListItemShopItems(aviableItems);
                     }
                 }
             } while (!exitShop);
 
             Console.Clear();
             DisplayBattleMenu();
+        }
+
+        private void ListItemShopItems(List<Item> aviableItems) {
+
+            if (aviableItems.Count <= 0) {
+                Console.WriteLine("--- Currently no items aviable ---");
+            }
+            else {
+                Console.WriteLine("Aviable Items:");
+                for (int i = 0; i < aviableItems.Count; i++) {
+                    int x = i + 1;
+                    Console.Write($"[{x}] {aviableItems[i].Name} ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        private bool BuyItem(Item item, PlayerCharacter playerCharacter) {
+            if(player.Coins >= item.Cost) {
+                Console.WriteLine($"{playerCharacter.Name} buys " + item.Name);
+                playerCharacter.GetEquipment.Equip(item.OccupiesSlot, item);
+                return true;
+            } else {
+                Console.WriteLine("You can't afford that item");
+                return false;
+            }
         }
 
         private void DisplayBattleMenu() {

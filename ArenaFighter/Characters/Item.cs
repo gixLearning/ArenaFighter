@@ -11,15 +11,17 @@ namespace ArenaFighter.Characters {
         public string Name { get; }
         public int Modifier { get; }
         public EquipmentSlot OccupiesSlot { get; }
+        public int Cost { get; }
 
         public Item() {
 
         }
 
-        public Item(EquipmentSlot equipmentSlot, string name, int modifierValue) {
+        public Item(EquipmentSlot equipmentSlot, string name, int modifierValue, int cost) {
             OccupiesSlot = equipmentSlot;
             Modifier = modifierValue;
             Name = name;
+            Cost = cost;
         }
     }
 }

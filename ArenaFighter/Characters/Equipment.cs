@@ -25,7 +25,7 @@ namespace ArenaFighter.Characters {
             }
         }
 
-        public void AddEquipment(EquipmentSlot equipmentSlot, Item item) {
+        public void Equip(EquipmentSlot equipmentSlot, Item item) {
             equipments.Add(equipmentSlot, item);
         }
     }

@@ -60,6 +60,7 @@ namespace ArenaFighter {
             battle.Play();
 
             if (battle.BattleEnded) {
+                Console.WriteLine("A history of events:");
                 battleLog.ShowLog();
                 Console.ReadLine();
             }

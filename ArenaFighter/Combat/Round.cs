@@ -59,7 +59,7 @@ namespace ArenaFighter.Combat {
         }
 
         private void DoDamage(Character attackingCharacter, Character defendingCharacter) {
-            int totalDamage = attackingCharacter.Strenght - defendingCharacter.Defense;
+            int totalDamage = attackingCharacter.Strenght - (defendingCharacter.Defense + AddModifier(Modifiers.Defense, defendingCharacter));
             int modifierDamage = 0;
 
             modifierDamage += AddModifier(Modifiers.Damage, attackingCharacter);
@@ -96,7 +96,8 @@ namespace ArenaFighter.Combat {
                     break;
                 }
                 case Modifiers.Defense:
-                break;
+                    equipmentSlot = EquipmentSlot.Torso;
+                    break;
             }
 
             if (character.GetEquipment.DoesHaveEquipment && equipmentSlot != EquipmentSlot.Empty) {
