@@ -53,6 +53,7 @@
     <Compile Include="Characters\NonPlayerCharacter.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Characters\PlayerCharacter.cs" />
+    <Compile Include="Combat\ArenaModifier.cs" />
     <Compile Include="Combat\Battle.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Dice.cs" />

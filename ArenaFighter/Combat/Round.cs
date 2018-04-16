@@ -6,14 +6,16 @@ using ArenaFighter.Enums;
 
 namespace ArenaFighter.Combat {
     internal class Round {
-        private Character pc;
-        private Character npc;
-        private Dice dice;
         private BattleLog battleLog;
+        private Dice dice;
+        private Character npc;
+        private Character pc;
+        private ArenaModifier arenaModifier;
 
-        public Round(Character pc, Character npc, BattleLog battleLog) {
+        public Round(Character pc, Character npc, ArenaModifier arenaModifier, BattleLog battleLog) {
             this.pc = pc;
             this.npc = npc;
+            this.arenaModifier = arenaModifier;
             this.battleLog = battleLog;
             dice = new Dice();
         }
@@ -34,8 +36,8 @@ namespace ArenaFighter.Combat {
                 opponentInitiativeRoll += result;
             }
 
-            playerInitiative += AddModifier(Modifiers.Initiative, pc) + playerInitiativeRoll;
-            opponentInitiative += AddModifier(Modifiers.Initiative, npc) + opponentInitiativeRoll;
+            playerInitiative += AddModifier(Modifiers.Initiative, pc) + playerInitiativeRoll + arenaModifier.Modifier;
+            opponentInitiative += AddModifier(Modifiers.Initiative, npc) + opponentInitiativeRoll + arenaModifier.Modifier;
 
 
             Console.WriteLine("--------------");
@@ -56,6 +58,32 @@ namespace ArenaFighter.Combat {
             }
 
             Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        private int AddModifier(Modifiers modifierType, Character character) {
+            int modifier = 0;
+
+            EquipmentSlot equipmentSlot = EquipmentSlot.Empty;
+
+            switch (modifierType) {
+                case Modifiers.Initiative: {
+                    equipmentSlot = EquipmentSlot.Accessory;
+                    break;
+                }
+                case Modifiers.Damage: {
+                    equipmentSlot = EquipmentSlot.Hands;
+                    break;
+                }
+                case Modifiers.Defense:
+                equipmentSlot = EquipmentSlot.Torso;
+                break;
+            }
+
+            if (character.GetEquipment.DoesHaveEquipment && equipmentSlot != EquipmentSlot.Empty) {
+                modifier += (int)character.GetEquipment.GetEquipInSlot(equipmentSlot)?.Modifier;
+            }
+
+            return modifier;
         }
 
         private void DoDamage(Character attackingCharacter, Character defendingCharacter) {
@@ -79,32 +107,6 @@ namespace ArenaFighter.Combat {
 
                 battleLog.AddToLog($"{attackingCharacter.Name} did damage to {defendingCharacter.Name}!");
             }
-        }
-
-        private int AddModifier(Modifiers modifierType, Character character) {
-            int modifier = 0;
-
-            EquipmentSlot equipmentSlot = EquipmentSlot.Empty;
-
-            switch (modifierType) {
-                case Modifiers.Initiative: {
-                    equipmentSlot = EquipmentSlot.Accessory;
-                    break;
-                }
-                case Modifiers.Damage: {
-                    equipmentSlot = EquipmentSlot.Hands;
-                    break;
-                }
-                case Modifiers.Defense:
-                    equipmentSlot = EquipmentSlot.Torso;
-                    break;
-            }
-
-            if (character.GetEquipment.DoesHaveEquipment && equipmentSlot != EquipmentSlot.Empty) {
-                modifier += (int)character.GetEquipment.GetEquipInSlot(equipmentSlot)?.Modifier;
-            }
-
-            return modifier;
         }
     }
 }

@@ -3,9 +3,9 @@ using ArenaFighter.Enums;
 using NameGenerator;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ArenaFighter.Combat {
+
     public class Battle {
         private Player player;
         private Dice dice;
@@ -108,7 +108,6 @@ namespace ArenaFighter.Combat {
                 if (key != ConsoleKey.Enter) {
                     Console.WriteLine();
                 }
-
             } while (!quitPlay && !player.PlayerCharacter.IsDefeated);
 
             BattleEnded = true;
@@ -120,7 +119,7 @@ namespace ArenaFighter.Combat {
 
             Equipment equipment = playerCharacter.GetEquipment;
 
-            if(!equipment.DoesHaveEquipment) {
+            if (!equipment.DoesHaveEquipment) {
                 Console.WriteLine($"{playerCharacter.Name} doesn't have any equipment yet...");
                 return;
             }
@@ -136,12 +135,13 @@ namespace ArenaFighter.Combat {
 
         private void DoHeal(PlayerCharacter playerCharacter) {
             Console.WriteLine();
-            if(player.Coins >= 4) {
+            if (player.Coins >= 4) {
                 Console.WriteLine($"{playerCharacter.Name} was healed for 4 coins.");
 
                 playerCharacter.Health = playerCharacter.MaxHealth;
                 player.Coins -= 4;
-            } else {
+            }
+            else {
                 Console.WriteLine("You do not have enough coins to pay for healing.");
             }
         }
@@ -156,7 +156,6 @@ namespace ArenaFighter.Combat {
             else {
                 textColor = originalColor;
             }
-
 
             Console.WriteLine("### Character stats ###");
             Console.WriteLine($"Name: {playerCharacter.Name}\n" +
@@ -182,6 +181,12 @@ namespace ArenaFighter.Combat {
             bool fleeCombat = false;
             Round round;
             ConsoleKey key;
+            ArenaModifier arenaModifier = new ArenaModifier(ArenaModifier.Affects.All) {
+                AffectDescription = "It's very dusty!",
+                Modifier = -5,
+                AffectTitle = "Duststorm"
+            };
+
 
             while (characterIsAlive && doCombat) {
                 opponent = CreateOpponent();
@@ -201,11 +206,13 @@ namespace ArenaFighter.Combat {
                 }
 
                 Console.ReadLine();
+                Console.WriteLine($"{arenaModifier.AffectTitle} is affecting the arena! {arenaModifier.AffectDescription}\n" +
+                    $"Modifier: {arenaModifier.Modifier} to {arenaModifier.AffectsArena}");
 
                 battleLog.AddToLog($"A battle begins between {pc.Name} and {opponent.Name}!");
 
                 while (opponentIsAlive && characterIsAlive && !fleeCombat) {
-                    round = new Round(pc, opponent, battleLog);
+                    round = new Round(pc, opponent, arenaModifier, battleLog);
                     round.BeginRound();
 
                     if (opponent.Health <= 0) {
@@ -267,14 +274,13 @@ namespace ArenaFighter.Combat {
             do {
                 key = Console.ReadKey(true);
                 exitShop = key.Key == ConsoleKey.X;
-                
 
-                if(Int32.TryParse(key.KeyChar.ToString(), out itemToBuy)) {
+                if (Int32.TryParse(key.KeyChar.ToString(), out itemToBuy)) {
                     itemToBuy = itemToBuy - 1;
                     if (aviableItems.Count > itemToBuy && itemToBuy >= 0 && aviableItems[itemToBuy] != null) {
                         item = aviableItems[itemToBuy];
 
-                        if(BuyItem(item, player.PlayerCharacter)) {
+                        if (BuyItem(item, player.PlayerCharacter)) {
                             aviableItems.Remove(item);
                         }
                         ListItemShopItems(aviableItems);
@@ -287,7 +293,6 @@ namespace ArenaFighter.Combat {
         }
 
         private void ListItemShopItems(List<Item> aviableItems) {
-
             if (aviableItems.Count <= 0) {
                 Console.WriteLine("--- Currently no items aviable ---");
             }
@@ -302,11 +307,12 @@ namespace ArenaFighter.Combat {
         }
 
         private bool BuyItem(Item item, PlayerCharacter playerCharacter) {
-            if(player.Coins >= item.Cost) {
+            if (player.Coins >= item.Cost) {
                 Console.WriteLine($"{playerCharacter.Name} buys " + item.Name);
                 playerCharacter.GetEquipment.Equip(item.OccupiesSlot, item);
                 return true;
-            } else {
+            }
+            else {
                 Console.WriteLine("You can't afford that item");
                 return false;
             }
