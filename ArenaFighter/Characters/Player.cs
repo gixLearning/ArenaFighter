@@ -11,6 +11,7 @@ namespace ArenaFighter.Characters {
 
         public PlayerCharacter PlayerCharacter { get; set; }
         public int Coins { get; set; }
+        public int DefeatedOpponents { get { return defeatedOpponents.Count; } }
 
         public Player() {
             defeatedOpponents = new List<Character>();

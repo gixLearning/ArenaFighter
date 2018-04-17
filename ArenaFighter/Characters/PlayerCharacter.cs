@@ -8,5 +8,6 @@ namespace ArenaFighter.Characters {
     public class PlayerCharacter : Character {
         public bool IsDefeated { get; set; }
         public int Victories { get; set; }
+        public bool Retired { get; set; }
     }
 }

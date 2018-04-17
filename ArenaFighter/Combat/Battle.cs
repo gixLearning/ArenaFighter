@@ -98,7 +98,8 @@ namespace ArenaFighter.Combat {
                     }
                     case ConsoleKey.R: {
                         Console.WriteLine($"\n{player.PlayerCharacter.Name} has choosen to quit fighting and retire to live a peaceful life...");
-                        player.PlayerCharacter.IsDefeated = true;
+                        player.PlayerCharacter.Retired = true;
+                        quitPlay = true;
                         battleLog.AddToLog($"{player.PlayerCharacter.Name} retired from fighting.");
                         Console.ReadLine();
                         break;
@@ -180,12 +181,19 @@ namespace ArenaFighter.Combat {
             bool doCombat = true;
             bool fleeCombat = false;
             Round round;
+            Random rand = new Random();
             ConsoleKey key;
-            ArenaModifier arenaModifier = new ArenaModifier(ArenaModifier.Affects.All) {
+            ArenaModifier arenaModifier_bad = new ArenaModifier(ArenaModifier.Affects.All) {
                 AffectDescription = "It's very dusty!",
                 Modifier = -5,
                 AffectTitle = "Duststorm"
             };
+            ArenaModifier arenaModifier_good = new ArenaModifier(ArenaModifier.Affects.All) {
+                AffectDescription = "It's very loud but inspiring!",
+                Modifier = 5,
+                AffectTitle = "Cheering crowd"
+            };
+            ArenaModifier arenaModifier;
 
 
             while (characterIsAlive && doCombat) {
@@ -203,6 +211,12 @@ namespace ArenaFighter.Combat {
                 if (showHelpFirstTime) {
                     Console.WriteLine("(You can flee a battle by pressing [F])");
                     showHelpFirstTime = false;
+                }
+
+                if(rand.Next(100) < 40) {
+                    arenaModifier = arenaModifier_bad;
+                } else {
+                    arenaModifier = arenaModifier_good;
                 }
 
                 Console.ReadLine();

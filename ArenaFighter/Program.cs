@@ -62,6 +62,15 @@ namespace ArenaFighter {
             if (battle.BattleEnded) {
                 Console.WriteLine("A history of events:");
                 battleLog.ShowLog();
+
+                int totalScore = 0;
+                totalScore += player.DefeatedOpponents;
+
+                if (!player.PlayerCharacter.IsDefeated && player.DefeatedOpponents > 0) {
+                    totalScore += 50;
+                }
+
+                Console.WriteLine($"\nFinal score: {totalScore}");
                 Console.ReadLine();
             }
         }
