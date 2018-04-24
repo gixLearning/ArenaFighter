@@ -13,6 +13,7 @@ namespace ArenaFighter {
         private static bool charSelectConfirmed;
 
         static void Main(string[] args) {
+            Console.OutputEncoding = Encoding.Unicode;
 
             Console.Title = "ArenaFighter";
 
@@ -57,7 +58,11 @@ namespace ArenaFighter {
 
             BattleLog battleLog = new BattleLog();
             Battle battle = new Battle(player, battleLog);
-            battle.Play();
+            AdventureMap adventureMap = new AdventureMap(player, battle);
+            adventureMap.Play();
+
+
+            //battle.Play();
 
             if (battle.BattleEnded) {
                 Console.WriteLine("A history of events:");

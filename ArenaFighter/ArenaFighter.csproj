@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdventureMap.cs" />
     <Compile Include="BattleLog.cs" />
     <Compile Include="Characters\Attributes.cs" />
     <Compile Include="Characters\Equipment.cs" />
