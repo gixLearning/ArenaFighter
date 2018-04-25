@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 
 namespace ArenaFighter.Combat {
-
     public class Battle {
         private Player player;
         private Dice dice;
@@ -49,72 +48,72 @@ namespace ArenaFighter.Combat {
         /// <summary>
         /// Main loop of game.
         /// </summary>
-        internal void Play() {
-            bool quitPlay = false;
-            bool showMenu = true;
-            ConsoleKey key;
+        //internal void Play() {
+        //    bool quitPlay = false;
+        //    bool showMenu = true;
+        //    ConsoleKey key;
 
-            do {
-                if (showMenu) {
-                    DisplayBattleMenu();
-                    showMenu = false;
-                }
+        //    do {
+        //        if (showMenu) {
+        //            DisplayBattleMenu();
+        //            showMenu = false;
+        //        }
 
-                key = Console.ReadKey(false).Key;
+        //        key = Console.ReadKey(false).Key;
 
-                switch (key) {
-                    case ConsoleKey.E: {
-                        DisplayCharacterEquipment(player.PlayerCharacter);
-                        showMenu = true;
-                        break;
-                    }
-                    case ConsoleKey.Q: {
-                        quitPlay = true;
-                        break;
-                    }
-                    case ConsoleKey.H: {
-                        DoHeal(player.PlayerCharacter);
-                        showMenu = true;
-                        break;
-                    }
-                    case ConsoleKey.F: {
-                        DoCombat();
-                        showMenu = true;
-                        break;
-                    }
-                    case ConsoleKey.C: {
-                        DisplayCharacterInfo(player.PlayerCharacter);
-                        showMenu = true;
-                        break;
-                    }
-                    case ConsoleKey.S: {
-                        DisplayItemShopMenu();
-                        break;
-                    }
-                    case ConsoleKey.L: {
-                        ShowBattleLog();
-                        showMenu = true;
-                        break;
-                    }
-                    case ConsoleKey.R: {
-                        Console.WriteLine($"\n{player.PlayerCharacter.Name} has choosen to quit fighting and retire to live a peaceful life...");
-                        player.PlayerCharacter.Retired = true;
-                        quitPlay = true;
-                        battleLog.AddToLog($"{player.PlayerCharacter.Name} retired from fighting.");
-                        Console.ReadLine();
-                        break;
-                    }
-                }
+        //        switch (key) {
+        //            case ConsoleKey.E: {
+        //                DisplayCharacterEquipment(player.PlayerCharacter);
+        //                showMenu = true;
+        //                break;
+        //            }
+        //            case ConsoleKey.Q: {
+        //                quitPlay = true;
+        //                break;
+        //            }
+        //            case ConsoleKey.H: {
+        //                DoHeal(player.PlayerCharacter);
+        //                showMenu = true;
+        //                break;
+        //            }
+        //            case ConsoleKey.F: {
+        //                DoCombat();
+        //                showMenu = true;
+        //                break;
+        //            }
+        //            case ConsoleKey.C: {
+        //                DisplayCharacterInfo(player.PlayerCharacter);
+        //                showMenu = true;
+        //                break;
+        //            }
+        //            case ConsoleKey.S: {
+        //                DisplayItemShopMenu();
+        //                break;
+        //            }
+        //            case ConsoleKey.L: {
+        //                ShowBattleLog();
+        //                showMenu = true;
+        //                break;
+        //            }
+        //            case ConsoleKey.R: {
+        //                Console.WriteLine($"\n{player.PlayerCharacter.Name} has choosen to quit fighting and retire to live a peaceful life...");
+        //                player.PlayerCharacter.Retired = true;
+        //                quitPlay = true;
+        //                battleLog.AddToLog($"{player.PlayerCharacter.Name} retired from fighting.");
+        //                Console.ReadLine();
+        //                break;
+        //            }
+        //        }
 
-                if (key != ConsoleKey.Enter) {
-                    Console.WriteLine();
-                }
-            } while (!quitPlay && !player.PlayerCharacter.IsDefeated);
+        //        if (key != ConsoleKey.Enter) {
+        //            Console.WriteLine();
+        //        }
+        //    } while (!quitPlay && !player.PlayerCharacter.IsDefeated);
 
-            BattleEnded = true;
-        }
+        //    BattleEnded = true;
+        //}
 
-        private void DisplayCharacterEquipment(PlayerCharacter playerCharacter) {
+        internal void DisplayCharacterEquipment(PlayerCharacter playerCharacter) {
             Console.Clear();
             Console.WriteLine("### Character equipment ###");
 
@@ -122,12 +121,14 @@ namespace ArenaFighter.Combat {
 
             if (!equipment.DoesHaveEquipment) {
                 Console.WriteLine($"{playerCharacter.Name} doesn't have any equipment yet...");
+                WaitForExitKey();
                 return;
             }
 
             foreach (KeyValuePair<EquipmentSlot, Item> item in equipment.GetEquipments) {
                 Console.WriteLine(item.Key.ToString() + ": " + item.Value.Name);
             }
+            WaitForExitKey();
         }
 
         private void ShowBattleLog() {
@@ -147,7 +148,7 @@ namespace ArenaFighter.Combat {
             }
         }
 
-        private void DisplayCharacterInfo(PlayerCharacter playerCharacter) {
+        internal void DisplayCharacterInfo(PlayerCharacter playerCharacter) {
             Console.Clear();
             ConsoleColor textColor;
 
@@ -171,6 +172,17 @@ namespace ArenaFighter.Combat {
             Console.WriteLine($"Coins: {player.Coins}");
             Console.WriteLine();
             Console.ResetColor();
+
+            WaitForExitKey();
+        }
+
+        private void WaitForExitKey() {
+            ConsoleKeyInfo keyInfo;
+            bool exit;
+            do {
+                keyInfo = Console.ReadKey(true);
+                exit = keyInfo.Key == ConsoleKey.X;
+            } while (!exit);
         }
 
         internal void DoCombat() {
@@ -195,7 +207,6 @@ namespace ArenaFighter.Combat {
             };
             ArenaModifier arenaModifier;
 
-
             while (characterIsAlive && doCombat) {
                 opponent = CreateOpponent();
 
@@ -213,9 +224,10 @@ namespace ArenaFighter.Combat {
                     showHelpFirstTime = false;
                 }
 
-                if(rand.Next(100) < 40) {
+                if (rand.Next(100) < 40) {
                     arenaModifier = arenaModifier_bad;
-                } else {
+                }
+                else {
                     arenaModifier = arenaModifier_good;
                 }
 
@@ -269,11 +281,12 @@ namespace ArenaFighter.Combat {
                     player.PlayerCharacter.IsDefeated = true;
                 }
             }
+            Console.ReadKey();
         }
 
-        private void DisplayItemShopMenu() {
+        internal void DisplayItemShopMenu() {
             Console.Clear();
-            Console.WriteLine("### Item Shop ###");
+            Console.WriteLine("### Welcome to the itemshop! ###");
 
             ListItemShopItems(aviableItems);
 
@@ -301,9 +314,6 @@ namespace ArenaFighter.Combat {
                     }
                 }
             } while (!exitShop);
-
-            Console.Clear();
-            DisplayBattleMenu();
         }
 
         private void ListItemShopItems(List<Item> aviableItems) {
@@ -316,7 +326,6 @@ namespace ArenaFighter.Combat {
                     int x = i + 1;
                     Console.Write($"[{x}] {aviableItems[i].Name} ");
                 }
-                Console.WriteLine();
             }
         }
 
@@ -330,17 +339,6 @@ namespace ArenaFighter.Combat {
                 Console.WriteLine("You can't afford that item");
                 return false;
             }
-        }
-
-        private void DisplayBattleMenu() {
-            Console.WriteLine("--------------");
-            Console.WriteLine("[F] Find new opponent\n" +
-                "[C] Check character stats\n" +
-                "[E] Check character equipment\n" +
-                "[H] Heal (4 coins)\n" +
-                "[S] Buy equipment\n" +
-                "[L] Show the battlelog\n" +
-                "[R] Retire fighter");
         }
     }
 }

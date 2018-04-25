@@ -1,6 +1,7 @@
 ﻿using ArenaFighter.Characters;
 using ArenaFighter.Combat;
 using System;
+using System.Collections.Generic;
 
 namespace ArenaFighter {
 
@@ -10,7 +11,10 @@ namespace ArenaFighter {
         private char[,] charMap;
         private char originChar;
         private char destinationChar;
-        private string ch = "♦";
+        private char ch = '♦';
+        private char shop = '\u2302';
+        private char evilChar = '\u25BC';
+        private List<string> menuStrings = new List<string>();
 
         //private string ch = "♥";
         private bool exit;
@@ -19,6 +23,15 @@ namespace ArenaFighter {
             this.player = player;
             this.battle = battle;
             charMap = LoadMap();
+
+            menuStrings.Add("╔══════════════════════════════════╗");
+            menuStrings.Add("║ [C] Check character stats        ║");
+            menuStrings.Add("║ [E] Check character equipment    ║");
+            menuStrings.Add("║ [H] Heal (4 coins)               ║");
+            menuStrings.Add("║ [L] Show the battlelog           ║");
+            menuStrings.Add("║ [R] Retire fighter               ║");
+            menuStrings.Add("║ [X] Exit menus/game              ║");
+            menuStrings.Add("╚══════════════════════════════════╝");
         }
 
         private char[,] LoadMap() {
@@ -45,6 +58,8 @@ namespace ArenaFighter {
             charMap[Console.WindowWidth - 1, 0] = '╗';
             charMap[0, Console.WindowHeight - 1] = '╚';
             charMap[Console.WindowWidth - 1, Console.WindowHeight - 1] = '╝';
+
+            charMap[10, 10] = shop;
 
             return charMap;
         }
@@ -96,26 +111,83 @@ namespace ArenaFighter {
                         }
                         break;
                     }
-                    default:
-                    break;
+                    case ConsoleKey.C: {
+                        battle.DisplayCharacterInfo(player.PlayerCharacter);
+                        DrawMap(charMap);
+                        DrawCoord(coord, charMap);
+                        break;
+                    }
+                    case ConsoleKey.E: {
+                        battle.DisplayCharacterEquipment(player.PlayerCharacter);
+                        DrawMap(charMap);
+                        DrawCoord(coord, charMap);
+                        break;
+                    }
+
+                    case ConsoleKey.H: {
+                        DisplayHelpMenu();
+                        keyInfo = Console.ReadKey(true);
+                        DrawMap(charMap);
+                        DrawCoord(coord, charMap);
+
+                        //Avoid getting exit game when pressing x in helpmenu
+                        continue;
+                    }
                 }
 
                 CheckForEvilThings(coord, charMap, player);
+                CheckForNiceThings(coord, charMap, player);
 
                 exit = keyInfo.Key == ConsoleKey.X;
+                if (exit) {
+                    Console.WriteLine("Exit game? (Press X again to quit)");
+                    keyInfo = Console.ReadKey(true);
+                    exit = keyInfo.Key == ConsoleKey.X;
+                    if (!exit) {
+                        DrawMap(charMap);
+                        DrawCoord(coord, charMap);
+                    }
+                }
             } while (!exit);
+            battle.BattleEnded = true;
+        }
+        private void DisplayHelpMenu() {
+            int currentX = Console.CursorLeft;
+            int currentY = Console.CursorTop;
+
+            for (int i = 0; i < menuStrings.Count; i++) {
+                Console.WriteLine(menuStrings[i]);
+                Console.SetCursorPosition(currentX, currentY + i + 1);
+            }
         }
 
         private void CheckForEvilThings(Coord coord, char[,] charMap, Player player) {
-            char evilChar = '\u25BC';
             int oldPosX = Console.CursorLeft;
             int oldPosY = Console.CursorTop;
 
-
             if (charMap[coord.X, coord.Y] == evilChar) {
-                Console.WriteLine("EVIIIIIIIL");
-                Console.SetCursorPosition(oldPosX, oldPosY);
+                battle.DoCombat();
+
                 charMap[coord.X, coord.Y] = ' ';
+                DrawMap(charMap);
+
+                Console.SetCursorPosition(oldPosX, oldPosY);
+                Console.Write(ch);
+                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+            }
+        }
+
+        private void CheckForNiceThings(Coord coord, char[,] charMap, Player player) {
+            int oldPosX = Console.CursorLeft;
+            int oldPosY = Console.CursorTop;
+
+            if (charMap[coord.X, coord.Y] == shop) {
+                battle.DisplayItemShopMenu();
+                DrawMap(charMap);
+
+                Console.SetCursorPosition(oldPosX, oldPosY);
+                Console.Write(ch);
+                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
             }
         }
 

@@ -14,6 +14,7 @@ namespace ArenaFighter {
 
         static void Main(string[] args) {
             Console.OutputEncoding = Encoding.Unicode;
+            Console.SetWindowSize(165, 50);
 
             Console.Title = "ArenaFighter";
 
@@ -45,6 +46,7 @@ namespace ArenaFighter {
                     if (response != ConsoleKey.Enter) {
                         Console.WriteLine();
                     }
+                    Console.WriteLine();
                 } while (response != ConsoleKey.Y && response != ConsoleKey.N);
 
                 charSelectConfirmed = response == ConsoleKey.Y;
@@ -65,6 +67,7 @@ namespace ArenaFighter {
             //battle.Play();
 
             if (battle.BattleEnded) {
+                Console.Clear();
                 Console.WriteLine("A history of events:");
                 battleLog.ShowLog();
 
