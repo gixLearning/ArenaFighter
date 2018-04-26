@@ -55,7 +55,7 @@ namespace ArenaFighter {
             Console.ReadLine();
             Console.Clear();
 
-            DoIntro();
+            //DoIntro();
             player.PlayerCharacter = pc;
 
             BattleLog battleLog = new BattleLog();
