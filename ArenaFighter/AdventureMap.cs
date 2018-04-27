@@ -64,6 +64,7 @@ namespace ArenaFighter {
             charMap[10, 10] = shop;
 
             MakeRiver(charMap);
+            MakeEvilThings(charMap);
 
             return charMap;
         }
@@ -71,6 +72,7 @@ namespace ArenaFighter {
         /// <summary>
         /// Very simple procedural river, starts from top and ends when it reach the bottom.
         /// </summary>
+        /// <param name="charMap"></param>
         private void MakeRiver(char[,] charMap) {
             Random rand = new Random();
             int currentRow = 0;
@@ -126,12 +128,11 @@ namespace ArenaFighter {
             for (int i = 0; i < charMap.GetLength(0); i++) {
                 for (int j = 0; j < charMap.GetLength(1) - 1; j++) {
                     if (charMap[i, j] == riverChar) {
-                        //Check if left and right of river is free
+                        //Check if there is a empty space above, below, left or right of a riverchar
                         if (j != 0 && charMap[i, j - 1] == ' ' && charMap[i, j + 1] == ' ') {
                             //charMap[i, j] = 'B';
                             positions.Add(new Tuple<int, int>(i, j));
                         }
-                        //Check if above and below river is free
                         if (i != 0 && charMap[i - 1, j] == ' ' && charMap[i + 1, j] == ' ') {
                             //charMap[i, j] = 'B';
                             positions.Add(new Tuple<int, int>(i, j));
@@ -141,8 +142,8 @@ namespace ArenaFighter {
             }
 
             //Pick a random position from aviable crossings
-            var s = positions[rand.Next(positions.Count)];
-            charMap[s.Item1, s.Item2] = bridgeChar;
+            Tuple<int, int> p = positions[rand.Next(positions.Count)];
+            charMap[p.Item1, p.Item2] = bridgeChar;
         }
 
         internal void Play() {
@@ -154,7 +155,6 @@ namespace ArenaFighter {
             ConsoleKeyInfo keyInfo;
 
             DrawMap(charMap);
-            DrawEvilThings(charMap);
 
             Console.SetCursorPosition(coord.X, coord.Y);
             DrawAtCoord(coord, charMap);
@@ -216,8 +216,12 @@ namespace ArenaFighter {
                     }
                 }
 
-                CheckForEvilThings(coord, charMap, player);
                 CheckForNiceThings(coord, charMap, player);
+                CheckForEvilThings(coord, charMap, player);
+
+                if (player.PlayerCharacter.IsDefeated) {
+                    break;
+                }
 
                 exit = keyInfo.Key == ConsoleKey.X;
                 if (exit) {
@@ -249,6 +253,10 @@ namespace ArenaFighter {
 
             if (charMap[coord.X, coord.Y] == evilChar) {
                 battle.DoCombat();
+
+                if (player.PlayerCharacter.IsDefeated) {
+                    return;
+                }
 
                 charMap[coord.X, coord.Y] = ' ';
                 DrawMap(charMap);
@@ -304,19 +312,48 @@ namespace ArenaFighter {
         private void DrawMap(char[,] map) {
             int maxX = map.GetLength(0);
             int maxY = map.GetLength(1);
+            ConsoleColor consoleColor = Console.ForegroundColor;
+
+            Console.SetCursorPosition(0, 0);
+            char c;
 
             for (int y = 0; y < maxY; y++) {
                 string line = string.Empty;
                 for (int x = 0; x < maxX; x++) {
-                    line += map[x, y];
+                    c = map[x, y];
+                    if (c == riverChar || c == evilChar) {
+                        line += ' ';
+                    } else {
+                        line += map[x, y];
+                    }
                 }
                 Console.SetCursorPosition(0, y);
                 Console.Write(line);
             }
+
+            for (int i = 0; i < maxX; i++) {
+                for (int j = 0; j < maxY; j++) {
+                    c = map[i, j];
+                    if (c == riverChar) {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.SetCursorPosition(i, j);
+                        Console.Write(c);
+                    }
+                    else if (c == evilChar) {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.SetCursorPosition(i, j);
+                        Console.Write(c);
+                    }
+                    else {
+                        Console.ForegroundColor = consoleColor;
+                    }
+                }
+            }
+
             Console.SetCursorPosition(0, 0);
         }
 
-        private void DrawEvilThings(char[,] charMap) {
+        private void MakeEvilThings(char[,] charMap) {
             Random random = new Random();
 
             int xMax = charMap.GetLength(0) - 1;
@@ -341,8 +378,6 @@ namespace ArenaFighter {
                 }
 
                 charMap[x, y] = evilChar;
-                Console.SetCursorPosition(x, y);
-                Console.WriteLine(evilChar);
             }
         }
     }
